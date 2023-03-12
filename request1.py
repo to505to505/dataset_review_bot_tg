@@ -146,32 +146,13 @@ async def get_buttons_callbacks(update, context):
                 reply_markup = InlineKeyboardMarkup(buttons))
     
     elif f'corr{button_text}' in q_data:
-        buttons = create_buttons(('Auto', f'corrauto{button_text}'),
+        buttons = create_buttons(
                                   ('Pearson (parametric test)', f'pirson{button_text}'),
                                   ('Spearman (nonparametric test)', f'sperman{button_text}'))
         await context.bot.send_message(
             chat_id = update.effective_chat.id,
-            text = "What correlation coefficient are you interested in? (Press 'Auto' if you don't know)",
+            text = "What correlation coefficient are you interested in?",
             reply_markup = InlineKeyboardMarkup(buttons))
-        
-    elif f'corrauto{button_text}' in q_data:
-        ID = str(update.effective_chat.id)
-        data = pd.read_csv(f"{prepdata_url}/D{ID}.csv", index_col=0)
-        
-        with open(f"{prepdata_url}/data_vars{ID}.txt", "r") as file:
-            data_vars = ast.literal_eval(file.read())
-        
-        text_output_dict = get_corr_auto(data, data_vars, ID)
-        text = ""
-        for key, value in text_output_dict.items():
-            text += f"{key} - {value}\n"
-        await context.bot.send_message(chat_id = ID, text= 'Pearson correlation coefficient was used for all normally distributed values. \nSpearman was used for others!')
-        await context.bot.send_message(chat_id = ID, text= text)
-        await send_corr_files(update, context, f"{prepdata_url}/corr{ID}.csv", f"{prepdata_url}/p_val{ID}.csv", f"{img_url}/snscorr{ID}.png")
-        await remove_outputs(f"{prepdata_url}/corr{ID}.csv", f"{prepdata_url}/p_val{ID}.csv", f"{img_url}/snscorr{ID}.png")
-        buttons = create_buttons(('Descriptive statistics of numeric features', f'Descr_new{button_text}'), ('Variable Distribution Plots *', f'Plots{button_text}'), ('2-samples comparison (t-test/Mann–Whitney)', f'two{button_text}' ))
-        await context.bot.send_message(chat_id = update.effective_chat.id, text = f"What's next?\n * Drawing plots may take some time and we recommend you not using this feature if you have >10000 rows and >20 columns. Sorry for inconvenience  :(", 
-        reply_markup = InlineKeyboardMarkup(buttons))
 
             
     elif f'sperman{button_text}' in q_data:
