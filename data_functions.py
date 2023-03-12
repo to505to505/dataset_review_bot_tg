@@ -169,6 +169,7 @@ def get_corr_pearson(data, data_vars, ID):
     pval_df = pval_df.round(4)
     
     plt.clf()
+    plt.figure(figsize=(11.5,11.5))
     fig_corr = sns.heatmap(corr, annot=True, center=True)
     fig = fig_corr.get_figure()
     
@@ -194,56 +195,13 @@ def get_corr_spearman(data, data_vars, ID):
     pval_df = pval_df.round(4)
     
     plt.clf()
+    plt.figure(figsize=(11.5,11.5))
     fig_corr = sns.heatmap(corr, annot=True, center=True)
     fig = fig_corr.get_figure()
     
     fig.savefig(f"{img_url}/snscorr{ID}.png")
     corr.to_csv(f"{prepdata_url}/corr{ID}.csv")
     pval_df.to_csv(f"{prepdata_url}/p_val{ID}.csv")
-
-def get_corr_auto(data, data_vars, ID):
-    data = data.copy()
-    N = len(data)
-    
-    with open(f"{prepdata_url}/data_vars{ID}.txt", "r") as file:
-            data_vars = ast.literal_eval(file.read())
-    
-    corr = data[data_vars["num_features"]].corr()
-    corr = corr.round(4)
-    
-    cols = data[data_vars["num_features"]].columns.array
-    pval_df = pd.DataFrame()
-    text_corr_return = {}
-    seen_pairs = set()
-    for col1 in cols:
-        for col2 in cols:
-            _, pn1 = stats.shapiro(data[col1])
-            _, pn2 = stats.shapiro(data[col2])
-            if (pn1 > 0.05) and (pn2 > 0.05) or (N > 2000):
-                _, p_val = stats.pearsonr(data[col1], data[col2])
-                print(pn1, pn2)
-                if ((col1, col2) not in seen_pairs) and ((col2, col1) not in seen_pairs) and (col1 != col2):
-                    text_corr_return[f"{col1}---{col2}"] = "pearson"
-                    seen_pairs.add((col1, col2))
-            else:
-                _, p_val = stats.spearmanr(data[col1], data[col2])  
-                if ((col1, col2) not in seen_pairs) and ((col2, col1) not in seen_pairs) and (col1 != col2): 
-                    text_corr_return[f"{col1}---{col2}"] = "spearman"
-                    seen_pairs.add((col1, col2)) 
-                       
-            pval_df.loc[col1, col2] = p_val
-            
-    pval_df = pval_df.round(4)
-    
-    plt.clf()
-    fig_corr = sns.heatmap(corr, annot=True, center=True)
-    fig = fig_corr.get_figure()
-    
-    fig.savefig(f"{img_url}/snscorr{ID}.png")
-    corr.to_csv(f"{prepdata_url}/corr{ID}.csv")
-    pval_df.to_csv(f"{prepdata_url}/p_val{ID}.csv")
-    
-    return text_corr_return
     
 
 def descriptive(data, ID): 
