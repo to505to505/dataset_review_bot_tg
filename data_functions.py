@@ -261,27 +261,24 @@ def graphs(data, ID):
     cat_features = data_vars["cat_features"]
     n_cat_features = data_vars["n_cat_features"]
     n_num_features = data_vars["n_num_features"]
-    text_r = ''
 
     for v, feat in enumerate(num_features):
         plt.clf()
         plt.figure(facecolor='white')
-        fig_graph = sns.histplot(data=data, x=feat, bins=40, stat='density', common_norm=False, color='pink')
+        fig_graph = sns.histplot(data=data, x=data[feat], bins=40, stat='density', common_norm=False, color='pink')
         fig_graph.get_figure()
         plt.title(f"Density Histogram of {feat}")
         plt.savefig(f"{img_url}/graphs_n_{v}_{ID}.png")
     
     for v, feat in enumerate(cat_features):
-        try:
-            plt.clf()
-            plt.figure(facecolor='white')
-            fig_graph = sns.countplot(data=data, x=feat, color='pink')
-            fig_graph.get_figure()
-            plt.title(f"Countplot of {feat}")
-            plt.savefig(f"{img_url}/graphs_c_{v}_{ID}.png")
-        except ValueError:
-            text_r = text_r + f"Oops!  I could not draw the countplot of {feat}, maybe there are too much unique values.\n"
-    return text_r
+        plt.clf()
+        plt.figure(facecolor='white')
+        fig_graph = sns.countplot(data=data, x=data[feat], color='pink')
+        fig_graph.get_figure()
+        plt.title(f"Countplot of {feat}")
+        plt.savefig(f"{img_url}/graphs_c_{v}_{ID}.png")
+            
+    
 
 
     

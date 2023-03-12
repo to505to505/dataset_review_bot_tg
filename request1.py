@@ -28,7 +28,7 @@ async def get_document(update, context):
     )
 
     buttons = create_buttons(('Descriptive statistics of numeric features', f'Descr_new{button_text}'), ('Variable Distribution Plots *', f'Plots{button_text}'), ('Preprocess data', f'preprocess{button_text}'))
-    await context.bot.send_message(chat_id = update.effective_chat.id, text = f"What's next?\n * Drawing plots may take some time and we recommend you not using this feature if you have >10000 rows and >20 columns. Sorry for inconvenience  :(", 
+    await context.bot.send_message(chat_id = update.effective_chat.id, text = f"What's next?\n * Drawing plots may take some time, especially if you have many variables and rows :(", 
     reply_markup = InlineKeyboardMarkup(buttons))
 
 async def get_buttons_callbacks(update, context):
@@ -39,20 +39,20 @@ async def get_buttons_callbacks(update, context):
 
     if f'Descr_new{button_text}' in q_data:
         ID = update.effective_chat.id
-        data = pd.read_csv(f"{input_url}/D{ID}.csv", index_col=0)
+        data = pd.read_csv(f"{input_url}/D{ID}.csv", index_col=False)
         descriptive(data, ID)
         for i in range(1, 100, 1):
             if os.path.isfile(f"{img_url}/descriptive{i}_{ID}.png"): 
                 await send_img(update, context, f"{img_url}/descriptive{i}_{ID}.png", filename = 'descriptive_stat')
                 await remove_outputs(f"{img_url}/descriptive{i}_{ID}.png")
         buttons = create_buttons(('Descriptive statistics of numeric features', f'Descr_new{button_text}'), ('Variable Distribution Plots *', f'Plots{button_text}'), ('Preprocess data', f'preprocess{button_text}'))
-        await context.bot.send_message(chat_id = update.effective_chat.id, text = f"What's next?\n * Drawing plots may take some time and we recommend you not using this feature if you have >10000 rows and >20 columns. Sorry for inconvenience  :(", 
+        await context.bot.send_message(chat_id = update.effective_chat.id, text = f"What's next?\n * Drawing plots may take some time, especially if you have many variables and rows :(", 
         reply_markup = InlineKeyboardMarkup(buttons))
 
     elif f'Plots{button_text}' in q_data:
         ID = update.effective_chat.id
-        data = pd.read_csv(f"{input_url}/D{ID}.csv", index_col=0)
-        text_r = graphs(data, ID)
+        data = pd.read_csv(f"{input_url}/D{ID}.csv", index_col=False)
+        graphs(data, ID)
         for v in range(0, 100, 1):
             if os.path.isfile(f"{img_url}/graphs_n_{v}_{ID}.png"): 
                 await send_img(update, context, f"{img_url}/graphs_n_{v}_{ID}.png", filename=f'graphs_num_{v}')
@@ -63,7 +63,7 @@ async def get_buttons_callbacks(update, context):
                 await send_img(update, context, f"{img_url}/graphs_c_{v}_{ID}.png", filename=f'graphs_cat_{v}')
                 await remove_outputs(f"{img_url}/graphs_c_{v}_{ID}.png")
         buttons = create_buttons(('Descriptive statistics of numeric features', f'Descr_new{button_text}'), ('Variable Distribution Plots *', f'Plots{button_text}'), ('Preprocess data', f'preprocess{button_text}'))
-        await context.bot.send_message(chat_id = update.effective_chat.id, text = f"{text_r}\nWhat's next?\n * Drawing plots may take some time and we recommend you not using this feature if you have >10000 rows and >20 columns. Sorry for inconvenience  :(", 
+        await context.bot.send_message(chat_id = update.effective_chat.id, text = f"What's next?\n * Drawing plots may take some time, especially if you have many variables and rows :(", 
         reply_markup = InlineKeyboardMarkup(buttons))
 
         
@@ -157,7 +157,7 @@ async def get_buttons_callbacks(update, context):
             
     elif f'sperman{button_text}' in q_data:
         ID = update.effective_chat.id
-        data = pd.read_csv(f"{prepdata_url}/D{ID}.csv", index_col=0)
+        data = pd.read_csv(f"{prepdata_url}/D{ID}.csv", index_col=False)
         
         with open(f"{prepdata_url}/data_vars{ID}.txt", "r") as file:
             data_vars = ast.literal_eval(file.read())
@@ -166,12 +166,12 @@ async def get_buttons_callbacks(update, context):
         await send_corr_files(update, context, f"{prepdata_url}/corr{ID}.csv", f"{prepdata_url}/p_val{ID}.csv", f"{img_url}/snscorr{ID}.png")
         await remove_outputs(f"{prepdata_url}/corr{ID}.csv", f"{prepdata_url}/p_val{ID}.csv", f"{img_url}/snscorr{ID}.png")
         buttons = create_buttons(('Descriptive statistics of numeric features', f'Descr_new{button_text}'), ('Variable Distribution Plots *', f'Plots{button_text}'), ('2-samples comparison (t-test/Mann–Whitney)', f'two{button_text}' ))
-        await context.bot.send_message(chat_id = update.effective_chat.id, text = f"What's next?\n * Drawing plots may take some time and we recommend you not using this feature if you have >10000 rows and >20 columns. Sorry for inconvenience  :(", 
+        await context.bot.send_message(chat_id = update.effective_chat.id, text = f"What's next?\n * Drawing plots may take some time, especially if you have many variables and rows :(", 
         reply_markup = InlineKeyboardMarkup(buttons))
             
     elif f'pirson{button_text}' in q_data:
         ID = update.effective_chat.id
-        data = pd.read_csv(f"{prepdata_url}/D{ID}.csv", index_col=0)
+        data = pd.read_csv(f"{prepdata_url}/D{ID}.csv", index_col=False)
         
         with open(f"{prepdata_url}/data_vars{ID}.txt", "r") as file:
             data_vars = ast.literal_eval(file.read())
@@ -180,7 +180,7 @@ async def get_buttons_callbacks(update, context):
         await send_corr_files(update, context, f"{prepdata_url}/corr{ID}.csv", f"{prepdata_url}/p_val{ID}.csv", f"{img_url}/snscorr{ID}.png") 
         await remove_outputs(f"{prepdata_url}/corr{ID}.csv", f"{prepdata_url}/p_val{ID}.csv", f"{img_url}/snscorr{ID}.png")
         buttons = create_buttons(('Descriptive statistics of numeric features', f'Descr_new{button_text}'), ('Variable Distribution Plots *', f'Plots{button_text}'), ('2-samples comparison (t-test/Mann–Whitney)', f'two{button_text}' ))
-        await context.bot.send_message(chat_id = update.effective_chat.id, text = f"What's next?\n * Drawing plots may take some time and we recommend you not using this feature if you have >10000 rows and >20 columns. Sorry for inconvenience  :(", 
+        await context.bot.send_message(chat_id = update.effective_chat.id, text = f"What's next?\n * Drawing plots may take some time, especially if you have many variables and rows :(", 
         reply_markup = InlineKeyboardMarkup(buttons))
                 
     
@@ -201,7 +201,7 @@ async def get_buttons_callbacks(update, context):
                     choice = ""
                     
                 ID = update.effective_chat.id 
-                data = pd.read_csv(f"{prepdata_url}/D{ID}.csv", index_col=0)
+                data = pd.read_csv(f"{prepdata_url}/D{ID}.csv", index_col=False)
             
                 if choice == "t-test":
                     get_ttest(data, ID, bf)
@@ -212,7 +212,7 @@ async def get_buttons_callbacks(update, context):
                     await send_file(update, context, f"{prepdata_url}/twov{ID}.csv", f"2sample_{choice}_{bf}.csv")
                     await remove_outputs(f"{prepdata_url}/twov{ID}.csv")
                     buttons = create_buttons(('Descriptive statistics of numeric features', f'Descr_new{button_text}'), ('Variable Distribution Plots *', f'Plots{button_text}'), ('Correlation analysis', f'corr{button_text}' ))
-                    await context.bot.send_message(chat_id = update.effective_chat.id, text = f"What's next?\n * Drawing plots may take some time and we recommend you not using this feature if you have >10000 rows and >20 columns. Sorry for inconvenience  :(", 
+                    await context.bot.send_message(chat_id = update.effective_chat.id, text = f"What's next?\n * Drawing plots may take some time, especially if you have many variables and rows :(", 
                     reply_markup = InlineKeyboardMarkup(buttons))
                 except:
                     pass
